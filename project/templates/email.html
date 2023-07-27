@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+
+<body style="font-family: Arial, Helvetica, sans-serif; padding: 10px;">
+<h3>Greetings @{{ user }}!</h3>
+<h4>We hope you are enjoying using our app.</h4>
+<h4>Here is your monthly summary of stats for your account.</h4>
+<h4>Stats:</h4>
+<table style=" width: 50%; border-style: none;">
+<tbody>
+<tr>
+<td style="width: 25%;">Number of Posts</td>
+<td style="width: 25%; ">{{ n_posts }} </td>
+
+</tr>
+<tr>
+<td style="width: 25%; ">Number of Followings</td>
+<td style="width: 25%; ">{{ n_followings }}</td>
+
+</tr>
+<tr>
+<td style="width: 25%; ">Number of Followers</td>
+<td style="width: 25%; ">{{ n_followers }}</td>
+
+</tr>
+</tbody>
+</table>
+<p></p>
+<h4>Your activity:</h4>
+<ul>
+<li>Posted {{ n_newposts }} new posts this month.</li></ul>
+
+{% if n_newposts > 0 %}
+
+<h4>Your latest posts:</h4>
+
+
+{% for t in records %}
+<div style="background-color:rgb(221, 234, 250); border-left:5px; border-style: none none none solid; border-color:#2196F3; padding: 10px">
+<h4> {{t.caption}} </h4>
+<p> {{ t.body }} </p>
+</div>
+<br>
+{% endfor %}
+{% endif %}
+
+
+<h4>We would love to hear from you. Reach us at <a href="mailto:support@bloglite.com">support@bloglite.com</a>.</h4>
+<h4>Regards</h4>
+<h4>Team Bloglite</h4>
+</body>
+</html>

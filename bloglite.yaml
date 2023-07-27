@@ -1,0 +1,615 @@
+openapi: 3.0.3
+info:
+  title: Bloglite API
+  description: Bloglite is a light weight social network web app
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:5000/api
+
+
+tags:
+  - name: authAPI
+    description: returns current user
+  - name: feedAPI
+    description: Generates user-specific feed
+  - name: postAPI
+    description: Handles Posts
+  - name: profileAPI
+    description: Handles Profiles
+  - name: searchAPI
+    description: Handles searches
+  - name: followingAPI
+    description: Handles followings of user
+  - name: followerAPI
+    description: Handles followers of user
+  - name: hookAPI
+    description: Handles webhooks
+  - name: exportAPI
+    description: Exports csv
+paths:
+  /user:
+    summary: user path
+    get:
+      summary: gets user
+      description: ''
+      operationId: ''
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'  
+      tags:
+        - authAPI
+      security:
+        - api_key: []
+  /posts/{username}:
+    summary: returns all posts by user
+    get:
+      summary: gets all posts by logged user
+      description: ''
+      operationId: POSTSGET
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: page number
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getposts'  
+      tags:
+        - postAPI
+      security:
+        - api_key: []
+  /posts:
+    post:
+      summary: gets profile of logged user
+      description: ''
+      operationId: POSTSPOST
+      requestBody:
+        description: New Post
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/posts'
+        required: false
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ok' 
+      tags:
+        - postAPI
+      security:
+        - api_key: []
+  /posts/edit/{id}:
+    patch:
+      summary: gets profile of logged user
+      description: ''
+      operationId: POSTSPATCH
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: integer
+        - name: delete_image
+          in: query
+          description: image
+          required: false
+          schema:
+            type: string
+            enum:
+              - 'true'
+      requestBody:
+        description: Edit Post
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/posts'
+        required: false
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ok' 
+        '400':
+          description: Illegal action
+      tags:
+        - postAPI
+      security:
+        - api_key: []
+  /posts/delete/{id}:
+    delete:
+      summary: gets profile of logged user
+      description: ''
+      operationId: POSTDELETE
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ok' 
+        '400':
+          description: Illegal action
+      tags:
+        - postAPI
+      security:
+        - api_key: []
+  /profile/{username}:
+    summary: Profiles
+    get:
+      summary: gets profile of logged user
+      description: ''
+      operationId: PROFILESGET
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getprofile'  
+      tags:
+        - profileAPI
+      security:
+        - api_key: []
+  /profile/edit/{username}:
+    patch:
+      summary: gets profile of logged user
+      description: ''
+      operationId: PROFILESPATCH
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          schema:
+            type: string
+        - name: delete_image
+          in: query
+          description: image
+          required: false
+          schema:
+            type: string
+            enum:
+              - 'true'
+      requestBody:
+        description: Edit Profile
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/profiles'
+        required: false
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ok' 
+        '400':
+          description: Illegal action
+      tags:
+        - profileAPI
+      security:
+        - api_key: []
+  /feed/{username}:
+    summary: Feed
+    get:
+      summary: generates feed for logged user
+      description: ''
+      operationId: FEEDGET
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: page number
+          required: false
+          schema:
+            type: integer
+      responses:
+        default:
+          description: Default error sample response
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getposts' 
+        '400':
+          description: Illegal action
+      tags: 
+        - feedAPI
+      security:
+        - api_key: []
+  /src/{username}:
+    summary: search
+    get:
+      summary: returns search results
+      description: ''
+      operationId: SEARCHGET
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: page number
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getsrcresults'  
+      tags:
+        - searchAPI
+      security:
+        - api_key: []
+  /following/{username}:
+    summary: returns all posts by user
+    get:
+      summary: gets all posts by logged user
+      description: ''
+      operationId: FOLLOWINGGET
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getfollowing'  
+      tags:
+        - followingAPI
+      security:
+        - api_key: []
+  /following:
+    post:
+      summary: gets profile of logged user
+      description: ''
+      operationId: FOLLOWINGPOST
+      requestBody:
+        description: New Post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/relations'
+        required: false
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ok' 
+        '400':
+          description: Illegal action
+      tags:
+        - followingAPI
+      security:
+        - api_key: []
+  /following/{user1}/{user2}:
+    delete:
+      summary: gets profile of logged user
+      description: ''
+      operationId: FOLLOWINGDELETE
+      parameters:
+        - name: user1
+          in: path
+          description: user1
+          required: true
+          schema:
+            type: string
+        - name: user2
+          in: path
+          description: user2
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ok' 
+        '400':
+          description: Illegal action
+      tags:
+        - followingAPI
+      security:
+        - api_key: []
+  /followers/{username}:
+    summary: returns all posts by user
+    get:
+      summary: gets all posts by logged user
+      description: ''
+      operationId: FOLLOWERGET
+      parameters:
+        - name: username
+          in: path
+          description: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getfollowers'  
+      tags:
+        - followerAPI
+      security:
+        - api_key: []
+  /add_hook:
+    summary: webhook
+    get:
+      summary: gets webhook for user
+      description: ''
+      operationId: HOOKGET
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/hooks'  
+      tags:
+        - hookAPI
+      security:
+        - api_key: []
+    post:
+      summary: gets profile of logged user
+      description: ''
+      operationId: HOOKPOST
+      requestBody:
+        description: New Post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/hooks'
+        required: false
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ok' 
+      tags:
+        - hookAPI
+      security:
+        - api_key: []
+  /exportfor/{duration}:
+    summary: Export
+    get:
+      summary: exports csv
+      description: ''
+      operationId: EXPORTGET
+      parameters:
+        - name: duration
+          in: path
+          description: duration
+          required: true
+          schema:
+            type: string
+            enum:
+              - one
+              - six
+              - all
+      responses:
+        '200':
+          description: Normal response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/export' 
+      tags:
+        - exportAPI
+      security:
+        - api_key: []
+components:
+  schemas:
+    getposts:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 12
+          username:
+            type: string
+            example: username
+          caption:
+            type: string
+            example: caption
+          body:
+            type: string
+            example: body
+          image:
+            type: string
+            example: '/static/imgs/20230323-124534_username.jpg'
+    getprofile:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 17
+          username:
+            type: integer
+            example: 12
+          about:
+            type: string
+            example: username
+          name:
+            type: string
+            example: caption
+          location:
+            type: string
+            example: body
+          dp:
+            type: string
+            example: '/static/imgs/username.jpg'
+          follower_count:
+            type: integer
+            example: 3
+          following_count:
+            type: integer
+            example: 22
+          post_count:
+            type: integer
+            example: 12
+    getsrcresults:
+      type: array
+      items:
+        type: object
+        properties:
+          user:
+            type: string
+            example: username
+          status:
+            type: integer
+            example: 0
+    getfollowing:
+      type: array
+      items:
+        type: string
+        example: user1
+    getfollowers:
+      type: array
+      items:
+        type: object
+        properties:
+          user:
+            type: string
+            example: username
+          status:
+            type: integer
+            example: 0    
+    user:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+    posts:
+      type: object
+      properties:
+        caption:
+          type: string
+          example: this is a caption
+        body:
+          type: string
+          example: this is the body
+        image:
+          type: string
+          format: binary   
+    profiles:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Name
+        dp:
+          type: string
+          format: binary
+          
+        location:
+          type: string
+          example: Kolkata
+        about:
+          type: string
+          example: About myself
+    relations:
+      type: object
+      properties:
+        follower:
+          type: string
+          example: user1
+        followed:
+          type: string
+          example: user2
+    hooks:
+      type: object
+      properties:
+        hook:
+          type: string
+          example: >-
+            https://chat.googleapis.com/vi/spaces/dercvg/messages?key=djkcfjhbwqenjk2jkbj
+    ok:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+          
+    export:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: 'Exported! check your mail.'
+    
+
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authentication_Token
+      in: header

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"crossorigin="anonymous">
+	
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+      
+
+    <div class="vh-100">
+      <div class="container-fluid">
+        <div class="row align-items-center justify-content-between">
+          <div class="col-sm-5 px-0  d-sm-block">
+              <img src="{{ url_for('static', filename='/imgs/assets/logincover.png') }}"
+                 class="w-100 vh-100" style="object-fit: cover">
+                
+            </div>
+
+          <div class="col-sm-7 text-black ">
+    
+          
+    
+            <div class="d-flex d-flex justify-content-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
+
+
+
+
+              <div style="width: 23rem;">
+    
+                <h3 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Log in</h3>
+    
+                <div class="form-outline mb-4">
+                  <input required type="email" id="email" class="form-control form-control-lg" /> <p id="err1" style="float:right; margin-left:5px; color:red"></p>
+                  <label class="form-label" for="email">Email address</label>
+                </div>
+    
+                <div class="form-outline mb-4">
+                  <input required type="password" id="password" class="form-control form-control-lg" /><p id="err2" style="float:right; margin-left:5px; color:red"></p>
+                  <label class="form-label" for="password" >Password</label>
+                </div>
+    
+                <div class="pt-1 mb-4">
+                  <button class="btn btn-info btn-lg btn-block" type="button" onclick="send()">Login</button>
+                </div>
+    
+                
+                <p>Don't have an account? <a href="/register" class="link-info">Register here</a></p>
+    
+              </div>
+
+
+
+
+            </div>
+    
+          </div>
+          
+        </div>
+      </div>
+  </div>
+
+
+
+<script>
+async function send(){
+  emaildata = document.getElementById("email").value;
+  pwddata= document.getElementById("password").value;
+  let data = { "email": emaildata, "password": pwddata};
+  let uauth= ""
+  let obj ={}
+  await fetch("http://127.0.0.1:5000/login?include_auth_token", { 
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data),
+    
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      if(data["meta"]["code"]== 200){
+        uauth = data["response"]["user"]["authentication_token"]    
+        console.log(data);
+        console.log(uauth);
+        sessionStorage.setItem("auth_token", uauth);
+        location.replace("/")
+    
+      }
+      else if( data["response"]["field_errors"]){
+        const err = data["response"]["field_errors"];
+        if(err["email"]){
+          document.getElementById('err1').innerText = err["email"][0]
+        }
+        if(err["password"]){
+
+          document.getElementById('err2').innerText = err["password"][0]
+        }
+
+      }
+      else{
+        alert(data["response"]["error"]);
+      }
+      
+  })
+ 
+
+}
+
+</script>
+
+
+      
+  </body>
+</html>
